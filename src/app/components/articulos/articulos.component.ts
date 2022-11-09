@@ -6,6 +6,7 @@ import { MockArticulosFamiliasService } from '../../services/mock-articulos-fami
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ArticulosService } from '../../services/articulos.service';
 import { ArticulosFamiliasService } from '../../services/articulos-familias.service';
+import { ModalDialogService } from "../../services/modal-dialog.service";
 
 @Component({
   selector: 'app-articulos',
@@ -14,6 +15,7 @@ import { ArticulosFamiliasService } from '../../services/articulos-familias.serv
 })
 export class ArticulosComponent implements OnInit {
   Titulo = 'Articulos';
+  submitted = false;
   TituloAccionABMC: { [index: string]: string } = {
     A: '(Agregar)',
     B: '(Eliminar)',
@@ -62,16 +64,20 @@ export class ArticulosComponent implements OnInit {
       Validators.required,
       Validators.pattern('[0-9]{1,7}'),
     ]),
-    
+
     CodigoDeBarra: new FormControl('', [
       Validators.required,
       Validators.pattern('[0-9]{13}'),
     ]),
 
     IdArticuloFamilia: new FormControl('', [Validators.required]),
-    FechaAlta: new FormControl('', [
-      Validators.required
+     FechaAlta: new FormControl('', [
+      Validators.required,
+      Validators.pattern(
+        '(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[012])[-/](19|20)[0-9]{2}'
+      ),
     ]),
+
     Activo: new FormControl(true),
   });
 
@@ -80,7 +86,8 @@ export class ArticulosComponent implements OnInit {
     //private articulosService: MockArticulosService,
     //private articulosFamiliasService: MockArticulosFamiliasService
     private articulosService: ArticulosService,
-    private articulosFamiliasService: ArticulosFamiliasService
+    private articulosFamiliasService: ArticulosFamiliasService,
+    private modalDialogService: ModalDialogService
   ) {}
 
   ngOnInit() {
@@ -94,24 +101,24 @@ export class ArticulosComponent implements OnInit {
   }
 
   Agregar() {
+    this.submitted = false;
+    this.FormRegistro.markAsUntouched();  // funcionalidad ya incluida en el FormRegistro.Reset…
+
     this.AccionABMC = 'A';
     this.FormRegistro.reset({ Activo: true, IdArticulo: 0 });
   }
 
   // Buscar segun los filtros, establecidos en FormRegistro
   Buscar() {
+    this.modalDialogService.BloquearPantalla();
     this.articulosService
-      .get(
-        this.FormBusqueda.value.Nombre,
-        this.FormBusqueda.value.Activo,
-        this.Pagina
-      )
+      .get(this.FormBusqueda.value.Nombre, this.FormBusqueda.value.Activo, this.Pagina)
       .subscribe((res: any) => {
         this.Items = res.Items;
         this.RegistrosTotal = res.RegistrosTotal;
+        this.modalDialogService.DesbloquearPantalla();
       });
   }
-
   // Obtengo un registro especifico según el Id
   BuscarPorId(Item: Articulo, AccionABMC: string) {
     window.scroll(0, 0); // ir al incio del scroll
@@ -134,6 +141,9 @@ export class ArticulosComponent implements OnInit {
 
   // comienza la modificacion, luego la confirma con el metodo Grabar
   Modificar(Item: Articulo) {
+    this.submitted = false;
+    this.FormRegistro.markAsUntouched();  // funcionalidad ya incluida en el FormRegistro.Reset…
+
     if (!Item.Activo) {
       alert('No puede modificarse un registro Inactivo.');
       return;
@@ -143,7 +153,7 @@ export class ArticulosComponent implements OnInit {
 
   // grabar tanto altas como modificaciones
   Grabar() {
-
+    this.submitted = true;
     if (this.FormRegistro.invalid) {
       return;
     }
@@ -187,17 +197,22 @@ export class ArticulosComponent implements OnInit {
     }
   }
 
-  ActivarDesactivar(Item: Articulo) {
-    var resp = confirm(
-      'Esta seguro de ' +
-        (Item.Activo ? 'desactivar' : 'activar') +
-        ' este registro?'
+  ActivarDesactivar(Item:Articulo) {
+    this.modalDialogService.Confirm(
+      "Esta seguro de " +
+        (Item.Activo ? "desactivar" : "activar") +
+        " este registro?",
+      undefined,
+      undefined,
+      undefined,
+      () =>
+        this.articulosService  
+          .delete(Item.IdArticulo)
+          .subscribe((res: any) => 
+            this.Buscar()
+          ),
+      null
     );
-    if (resp === true) {
-      this.articulosService
-        .delete(Item.IdArticulo)
-        .subscribe((res: any) => this.Buscar());
-    }
   }
 
   // Volver desde Agregar/Modificar

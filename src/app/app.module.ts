@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDialogComponent } from './components/modal-dialog/modal-dialog.component';
 
 @NgModule({
   imports: [
@@ -28,6 +30,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
       { path: 'articulos', component: ArticulosComponent },
     ]),
     NgbPaginationModule,
+    NgbModalModule,
   ],
   declarations: [
     AppComponent,
@@ -39,5 +42,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
     InicioComponent,
   ],
   bootstrap: [AppComponent],
+
+  entryComponents: [ModalDialogComponent],
 })
 export class AppModule {}
