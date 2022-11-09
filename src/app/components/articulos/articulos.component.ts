@@ -145,7 +145,7 @@ export class ArticulosComponent implements OnInit {
     this.FormRegistro.markAsUntouched();  // funcionalidad ya incluida en el FormRegistro.Reset…
 
     if (!Item.Activo) {
-      alert('No puede modificarse un registro Inactivo.');
+      this.modalDialogService.Alert('No puede modificarse un registro Inactivo.');
       return;
     }
     this.BuscarPorId(Item, 'M');
@@ -181,8 +181,8 @@ export class ArticulosComponent implements OnInit {
     // agregar post
     if (this.AccionABMC == 'A') {
       this.articulosService.post(itemCopy).subscribe((res: any) => {
+        this.modalDialogService.Alert('Registro agregado correctamente.');
         this.Volver();
-        alert('Registro agregado correctamente.');
         this.Buscar();
       });
     } else {
@@ -191,7 +191,7 @@ export class ArticulosComponent implements OnInit {
         .put(itemCopy.IdArticulo, itemCopy)
         .subscribe((res: any) => {
           this.Volver();
-          alert('Registro modificado correctamente.');
+          this.modalDialogService.Alert('Registro modificado correctamente.');
           this.Buscar();
         });
     }
@@ -221,7 +221,7 @@ export class ArticulosComponent implements OnInit {
   }
 
   ImprimirListado() {
-    alert('Sin desarrollar...');
+    this.modalDialogService.Alert('Sin desarrollar...');
   }
 
   GetArticuloFamiliaNombre(Id: number) {

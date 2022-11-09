@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 import { EjemploCompComponent } from './components/ejemplo-comp/ejemplo-comp.component';
 import { InicioComponent } from './components/inicio/inicio.component';
 import { ArticulosFamiliasComponent } from './components/articulos-familias/articulos-familias.component';
-import { HttpClientModule } from '@angular/common/http';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,6 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from './components/modal-dialog/modal-dialog.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MyInterceptor } from './shared/my-interceptor';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { ModalDialogComponent } from './components/modal-dialog/modal-dialog.com
     CommonModule,
     BrowserModule,
     FormsModule,
+    MyInterceptor,
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -40,9 +42,14 @@ import { ModalDialogComponent } from './components/modal-dialog/modal-dialog.com
     ArticulosComponent,
     ArticulosFamiliasComponent,
     InicioComponent,
+    ModalDialogComponent,
   ],
   bootstrap: [AppComponent],
 
   entryComponents: [ModalDialogComponent],
+
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: MyInterceptor, multi: true },
+  ],
 })
 export class AppModule {}
