@@ -47,14 +47,34 @@ export class ArticulosComponent implements OnInit {
 
   FormRegistro = new FormGroup({
     IdArticulo: new FormControl(0),
-    Nombre: new FormControl(''),
-    Precio: new FormControl(null),
-    Stock: new FormControl(null),
-    CodigoDeBarra: new FormControl(''),
-    IdArticuloFamilia: new FormControl(''),
-    FechaAlta: new FormControl(''),
+    Nombre: new FormControl('', [
+      Validators.required,
+      Validators.minLength(4),
+      Validators.maxLength(55),
+    ]),
+
+    Precio: new FormControl(null, [
+      Validators.required,
+      Validators.pattern('[0-9]{1,7}'),
+    ]),
+
+    Stock: new FormControl(null, [
+      Validators.required,
+      Validators.pattern('[0-9]{1,7}'),
+    ]),
+    
+    CodigoDeBarra: new FormControl('', [
+      Validators.required,
+      Validators.pattern('[0-9]{13}'),
+    ]),
+
+    IdArticuloFamilia: new FormControl('', [Validators.required]),
+    FechaAlta: new FormControl('', [
+      Validators.required
+    ]),
     Activo: new FormControl(true),
   });
+
 
   constructor(
     //private articulosService: MockArticulosService,
@@ -123,6 +143,10 @@ export class ArticulosComponent implements OnInit {
 
   // grabar tanto altas como modificaciones
   Grabar() {
+
+    if (this.FormRegistro.invalid) {
+      return;
+    }
     //hacemos una copia de los datos del formulario, para modificar la fecha y luego enviarlo al servidor
     const itemCopy: Articulo = {
       IdArticulo: this.FormRegistro.value.IdArticulo,
