@@ -1,0 +1,33 @@
+<h1>{{ titulo }}</h1>
+<table class="table table-striped">
+  <thead>
+    <td>Descripcion</td>
+    <td>Code</td>
+  </thead>
+  <tbody>
+    <tr *ngFor="let art of articulos">
+      <td>{{ art.descripcion }}</td>
+      <td>{{ art.codigo }}</td>
+      <td><img [src]="art.imagen" class="img-thumbnail" /></td>
+      <td>
+        <img
+          [src]="art.lowprice"
+          class="img-thumbnail"
+          *ngIf="art.precio < 500"
+        />
+        <img
+          [src]="art.highprice"
+          class="img-thumbnail"
+          *ngIf="art.precio != 500"
+        />
+      </td>
+      <td>{{ art.precio }}</td>
+      <td>
+        <button (click)="incrementoPrecio(art)" class="btn btn-danger">+</button
+        ><button class="btn btn-success" (click)="decrementoPrecio(art)">
+          -
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
