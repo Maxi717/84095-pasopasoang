@@ -12,6 +12,7 @@ import { ArticulosComponent } from './components/articulos/articulos.component';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { ReactiveFormsModule } from '@angular/forms';
       { path: 'articulosfamilias', component: ArticulosFamiliasComponent },
       { path: 'articulos', component: ArticulosComponent },
     ]),
+    NgbPaginationModule,
   ],
   declarations: [
     AppComponent,
