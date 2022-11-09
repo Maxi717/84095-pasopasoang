@@ -23,7 +23,6 @@ import { MyInterceptor } from './shared/my-interceptor';
     CommonModule,
     BrowserModule,
     FormsModule,
-    MyInterceptor,
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', redirectTo: '/inicio', pathMatch: 'full' },
