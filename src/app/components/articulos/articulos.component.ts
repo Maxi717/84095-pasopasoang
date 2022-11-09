@@ -6,7 +6,7 @@ import { MockArticulosFamiliasService } from '../../services/mock-articulos-fami
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ArticulosService } from '../../services/articulos.service';
 import { ArticulosFamiliasService } from '../../services/articulos-familias.service';
-import { ModalDialogService } from "../../services/modal-dialog.service";
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-articulos',
@@ -71,7 +71,7 @@ export class ArticulosComponent implements OnInit {
     ]),
 
     IdArticuloFamilia: new FormControl('', [Validators.required]),
-     FechaAlta: new FormControl('', [
+    FechaAlta: new FormControl('', [
       Validators.required,
       Validators.pattern(
         '(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[012])[-/](19|20)[0-9]{2}'
@@ -80,7 +80,6 @@ export class ArticulosComponent implements OnInit {
 
     Activo: new FormControl(true),
   });
-
 
   constructor(
     //private articulosService: MockArticulosService,
@@ -102,7 +101,7 @@ export class ArticulosComponent implements OnInit {
 
   Agregar() {
     this.submitted = false;
-    this.FormRegistro.markAsUntouched();  // funcionalidad ya incluida en el FormRegistro.Reset…
+    this.FormRegistro.markAsUntouched(); // funcionalidad ya incluida en el FormRegistro.Reset…
 
     this.AccionABMC = 'A';
     this.FormRegistro.reset({ Activo: true, IdArticulo: 0 });
@@ -112,7 +111,11 @@ export class ArticulosComponent implements OnInit {
   Buscar() {
     this.modalDialogService.BloquearPantalla();
     this.articulosService
-      .get(this.FormBusqueda.value.Nombre, this.FormBusqueda.value.Activo, this.Pagina)
+      .get(
+        this.FormBusqueda.value.Nombre,
+        this.FormBusqueda.value.Activo,
+        this.Pagina
+      )
       .subscribe((res: any) => {
         this.Items = res.Items;
         this.RegistrosTotal = res.RegistrosTotal;
@@ -142,10 +145,12 @@ export class ArticulosComponent implements OnInit {
   // comienza la modificacion, luego la confirma con el metodo Grabar
   Modificar(Item: Articulo) {
     this.submitted = false;
-    this.FormRegistro.markAsUntouched();  // funcionalidad ya incluida en el FormRegistro.Reset…
+    this.FormRegistro.markAsUntouched(); // funcionalidad ya incluida en el FormRegistro.Reset…
 
     if (!Item.Activo) {
-      this.modalDialogService.Alert('No puede modificarse un registro Inactivo.');
+      this.modalDialogService.Alert(
+        'No puede modificarse un registro Inactivo.'
+      );
       return;
     }
     this.BuscarPorId(Item, 'M');
@@ -181,7 +186,6 @@ export class ArticulosComponent implements OnInit {
     // agregar post
     if (this.AccionABMC == 'A') {
       this.articulosService.post(itemCopy).subscribe((res: any) => {
-        this.modalDialogService.Alert('Registro agregado correctamente.');
         this.Volver();
         this.Buscar();
       });
@@ -197,20 +201,18 @@ export class ArticulosComponent implements OnInit {
     }
   }
 
-  ActivarDesactivar(Item:Articulo) {
+  ActivarDesactivar(Item: Articulo) {
     this.modalDialogService.Confirm(
-      "Esta seguro de " +
-        (Item.Activo ? "desactivar" : "activar") +
-        " este registro?",
+      'Esta seguro de ' +
+        (Item.Activo ? 'desactivar' : 'activar') +
+        ' este registro?',
       undefined,
       undefined,
       undefined,
       () =>
-        this.articulosService  
+        this.articulosService
           .delete(Item.IdArticulo)
-          .subscribe((res: any) => 
-            this.Buscar()
-          ),
+          .subscribe((res: any) => this.Buscar()),
       null
     );
   }
